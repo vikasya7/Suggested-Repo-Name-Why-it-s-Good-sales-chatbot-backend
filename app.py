@@ -142,7 +142,7 @@ def init_db():
             description=faker.sentence(),
             brand=faker.company(),
             rating=round(random.uniform(3.0, 5.0), 1),
-            image_url="https://via.placeholder.com/150"
+            image_url= "https://source.unsplash.com/200x150/?product"
         )
         db.session.add(product)
 
