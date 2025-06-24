@@ -19,6 +19,10 @@ class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False)
     price = db.Column(db.Integer, nullable=False)
+    description = db.Column(db.Text)
+    brand = db.Column(db.String(80))
+    rating = db.Column(db.Float)
+    image_url = db.Column(db.String(255))
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -43,19 +47,32 @@ def index():
 #     for _ in range(100):
 #         product = Product(
 #             name=faker.word().capitalize() + " " + faker.word().capitalize(),
-#             price=random.randint(100, 5000)
+#             price=random.randint(200, 5000),
+#             description=faker.sentence(),
+#             brand=faker.company(),
+#             rating=round(random.uniform(3.0, 5.0), 1),
+#             image_url="https://via.placeholder.com/150"
 #         )
 #         db.session.add(product)
 
 #     db.session.commit()
-#     return "Database initialized with 100 products"
+#     return "Database initialized with enriched product data"
+
 
 @app.route('/products', methods=["GET"])
 def get_products():
     all_products = Product.query.all()
     return jsonify([
-        {"id": p.id, "name": p.name, "price": p.price} for p in all_products
-    ])
+    {
+        "id": p.id,
+        "name": p.name,
+        "price": p.price,
+        "description": p.description,
+        "brand": p.brand,
+        "rating": p.rating,
+        "image_url": p.image_url
+    } for p in all_products
+])
 
 
 @app.route('/chatbot-query', methods=["POST"])
