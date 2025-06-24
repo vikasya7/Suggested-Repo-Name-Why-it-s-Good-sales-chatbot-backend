@@ -3,6 +3,8 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from faker import Faker
 import random
+from sqlalchemy import or_
+
 
 app = Flask(__name__)
 CORS(app)
@@ -39,12 +41,12 @@ users = []
 def index():
     return "Backend API is running"
 
-# @app.route("/init-db")
-# def init_db():
+@app.route("/init-db")
+def init_db():
     db.drop_all()
     db.create_all()
 
-    # ✅ 10 Realistic Products with Real Images
+    # ✅ 10 Realistic Products with Unsplash Images
     fixed_products = [
         {
             "name": "Wireless Mouse",
@@ -52,7 +54,7 @@ def index():
             "description": "Ergonomic wireless mouse with smooth tracking and USB receiver.",
             "brand": "Logitech",
             "rating": 4.5,
-            "image_url": "https://m.media-amazon.com/images/I/61LtuGzXeaL._SX679_.jpg"
+            "image_url": "https://source.unsplash.com/200x150/?mouse,computer"
         },
         {
             "name": "Gaming Keyboard",
@@ -60,7 +62,7 @@ def index():
             "description": "Mechanical RGB keyboard with blue switches and metal frame.",
             "brand": "Redragon",
             "rating": 4.7,
-            "image_url": "https://m.media-amazon.com/images/I/71cNGtGzTwL._SX679_.jpg"
+            "image_url": "https://source.unsplash.com/200x150/?keyboard,gaming"
         },
         {
             "name": "LED Desk Lamp",
@@ -68,7 +70,7 @@ def index():
             "description": "Foldable LED lamp with USB charging and adjustable brightness.",
             "brand": "Philips",
             "rating": 4.3,
-            "image_url": "https://m.media-amazon.com/images/I/51b5V6OQmUL._SX679_.jpg"
+            "image_url": "https://source.unsplash.com/200x150/?lamp,desk"
         },
         {
             "name": "Bluetooth Speaker",
@@ -76,7 +78,7 @@ def index():
             "description": "Portable waterproof Bluetooth speaker with deep bass.",
             "brand": "boAt",
             "rating": 4.4,
-            "image_url": "https://m.media-amazon.com/images/I/81O0wqUQ9GL._SX679_.jpg"
+            "image_url": "https://source.unsplash.com/200x150/?bluetooth,speaker"
         },
         {
             "name": "Phone Stand",
@@ -84,7 +86,7 @@ def index():
             "description": "Adjustable metal phone stand for desk use.",
             "brand": "AmazonBasics",
             "rating": 4.1,
-            "image_url": "https://m.media-amazon.com/images/I/61wJXrb6v-L._SX679_.jpg"
+            "image_url": "https://source.unsplash.com/200x150/?phone,stand"
         },
         {
             "name": "USB Charger",
@@ -92,7 +94,7 @@ def index():
             "description": "Fast-charging USB wall adapter with dual ports.",
             "brand": "Anker",
             "rating": 4.6,
-            "image_url": "https://m.media-amazon.com/images/I/61TL0TYM9XL._SX679_.jpg"
+            "image_url": "https://source.unsplash.com/200x150/?usb,charger"
         },
         {
             "name": "Laptop Case",
@@ -100,7 +102,7 @@ def index():
             "description": "Water-resistant laptop sleeve with soft inner lining.",
             "brand": "Targus",
             "rating": 4.4,
-            "image_url": "https://m.media-amazon.com/images/I/81k+Jgm8hPL._SX679_.jpg"
+            "image_url": "https://source.unsplash.com/200x150/?laptop,case"
         },
         {
             "name": "Webcam",
@@ -108,7 +110,7 @@ def index():
             "description": "HD webcam with microphone and USB plug-n-play.",
             "brand": "Logitech",
             "rating": 4.2,
-            "image_url": "https://m.media-amazon.com/images/I/61cWY5Rl+7L._SX679_.jpg"
+            "image_url": "https://source.unsplash.com/200x150/?webcam,computer"
         },
         {
             "name": "Monitor 24-inch",
@@ -116,7 +118,7 @@ def index():
             "description": "Full HD LED monitor with HDMI and VGA ports.",
             "brand": "Dell",
             "rating": 4.5,
-            "image_url": "https://m.media-amazon.com/images/I/81QpkIctqPL._SX679_.jpg"
+            "image_url": "https://source.unsplash.com/200x150/?monitor,screen"
         },
         {
             "name": "Power Bank",
@@ -124,14 +126,14 @@ def index():
             "description": "10,000mAh portable charger with dual output.",
             "brand": "Mi",
             "rating": 4.3,
-            "image_url": "https://m.media-amazon.com/images/I/61m+P1aKXzL._SX679_.jpg"
+            "image_url": "https://source.unsplash.com/200x150/?powerbank,battery"
         }
     ]
 
     for p in fixed_products:
         db.session.add(Product(**p))
 
-    # ✅ Add 100 Fake Products
+    # ✅ 100 Random Faker Products (for bulk)
     faker = Faker()
     for _ in range(100):
         product = Product(
@@ -145,23 +147,25 @@ def index():
         db.session.add(product)
 
     db.session.commit()
-    return "Database initialized with 110 products"
+    return "✅ Database initialized with 110 products (10 real + 100 fake)"
+
 
 @app.route("/preview-products")
 def preview_products():
     keywords = ["Mouse", "Keyboard", "Lamp", "Speaker", "Stand", "Charger", "Case", "Webcam", "Monitor", "Bank"]
 
     products = Product.query.filter(
-        db.or_(*[Product.name.ilike(f"%{kw}%") for kw in keywords])
+        or_(*[Product.name.ilike(f"%{kw}%") for kw in keywords])
     ).all()
 
     return jsonify([
         {
+            "id": p.id,
             "name": p.name,
-            "brand": p.brand,
             "price": p.price,
-            "rating": p.rating,
             "description": p.description,
+            "brand": p.brand,
+            "rating": p.rating,
             "image_url": p.image_url
         } for p in products
     ])
