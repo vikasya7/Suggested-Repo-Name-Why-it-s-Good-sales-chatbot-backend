@@ -41,7 +41,7 @@ users = []
 def index():
     return "Backend API is running"
 
-@app.route("/init-db")
+# @app.route("/init-db")
 def init_db():
     db.drop_all()
     db.create_all()
