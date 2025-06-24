@@ -74,6 +74,10 @@ def get_products():
     } for p in all_products
 ])
 
+@app.route("/preview-products")
+def preview_products():
+    products = Product.query.limit(20).all()
+    return jsonify([p.name for p in products])
 
 @app.route('/chatbot-query', methods=["POST"])
 def chatbot_query():
