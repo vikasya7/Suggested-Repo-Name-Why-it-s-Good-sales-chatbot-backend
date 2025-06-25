@@ -41,12 +41,12 @@ users = []
 def index():
     return "Backend API is running"
 
-# @app.route("/init-db")
+
 def init_db():
     db.drop_all()
     db.create_all()
 
-    # ✅ Fixed 10 Real Products with Real Image URLs
+    # ✅ 10 Real Products with static Unsplash image URLs
     fixed_products = [
         {
             "name": "Wireless Mouse",
@@ -133,7 +133,7 @@ def init_db():
     for p in fixed_products:
         db.session.add(Product(**p))
 
-    # ✅ 100 Faker Products (With placeholder images)
+    # ✅ 100 Faker Products with Picsum placeholder images
     faker = Faker()
     for _ in range(100):
         product = Product(
@@ -149,112 +149,7 @@ def init_db():
     db.session.commit()
     return "✅ Database initialized with 110 products (10 real + 100 fake)"
 
-def init_db():
-    db.drop_all()
-    db.create_all()
 
-    # ✅ 10 Realistic Products with Unsplash Images
-    fixed_products = [
-        {
-            "name": "Wireless Mouse",
-            "price": 499,
-            "description": "Ergonomic wireless mouse with smooth tracking and USB receiver.",
-            "brand": "Logitech",
-            "rating": 4.5,
-            "image_url": "https://source.unsplash.com/200x150/?mouse,computer"
-        },
-        {
-            "name": "Gaming Keyboard",
-            "price": 1499,
-            "description": "Mechanical RGB keyboard with blue switches and metal frame.",
-            "brand": "Redragon",
-            "rating": 4.7,
-            "image_url": "https://source.unsplash.com/200x150/?keyboard,gaming"
-        },
-        {
-            "name": "LED Desk Lamp",
-            "price": 899,
-            "description": "Foldable LED lamp with USB charging and adjustable brightness.",
-            "brand": "Philips",
-            "rating": 4.3,
-            "image_url": "https://source.unsplash.com/200x150/?lamp,desk"
-        },
-        {
-            "name": "Bluetooth Speaker",
-            "price": 1199,
-            "description": "Portable waterproof Bluetooth speaker with deep bass.",
-            "brand": "boAt",
-            "rating": 4.4,
-            "image_url": "https://source.unsplash.com/200x150/?bluetooth,speaker"
-        },
-        {
-            "name": "Phone Stand",
-            "price": 299,
-            "description": "Adjustable metal phone stand for desk use.",
-            "brand": "AmazonBasics",
-            "rating": 4.1,
-            "image_url": "https://source.unsplash.com/200x150/?phone,stand"
-        },
-        {
-            "name": "USB Charger",
-            "price": 499,
-            "description": "Fast-charging USB wall adapter with dual ports.",
-            "brand": "Anker",
-            "rating": 4.6,
-            "image_url": "https://source.unsplash.com/200x150/?usb,charger"
-        },
-        {
-            "name": "Laptop Case",
-            "price": 799,
-            "description": "Water-resistant laptop sleeve with soft inner lining.",
-            "brand": "Targus",
-            "rating": 4.4,
-            "image_url": "https://source.unsplash.com/200x150/?laptop,case"
-        },
-        {
-            "name": "Webcam",
-            "price": 1099,
-            "description": "HD webcam with microphone and USB plug-n-play.",
-            "brand": "Logitech",
-            "rating": 4.2,
-            "image_url": "https://source.unsplash.com/200x150/?webcam,computer"
-        },
-        {
-            "name": "Monitor 24-inch",
-            "price": 8999,
-            "description": "Full HD LED monitor with HDMI and VGA ports.",
-            "brand": "Dell",
-            "rating": 4.5,
-            "image_url": "https://source.unsplash.com/200x150/?monitor,screen"
-        },
-        {
-            "name": "Power Bank",
-            "price": 1499,
-            "description": "10,000mAh portable charger with dual output.",
-            "brand": "Mi",
-            "rating": 4.3,
-            "image_url": "https://source.unsplash.com/200x150/?powerbank,battery"
-        }
-    ]
-
-    for p in fixed_products:
-        db.session.add(Product(**p))
-
-    # ✅ 100 Random Faker Products (for bulk)
-    faker = Faker()
-    for _ in range(100):
-        product = Product(
-            name=faker.word().capitalize() + " " + faker.word().capitalize(),
-            price=random.randint(200, 5000),
-            description=faker.sentence(),
-            brand=faker.company(),
-            rating=round(random.uniform(3.0, 5.0), 1),
-            image_url= "https://source.unsplash.com/200x150/?product"
-        )
-        db.session.add(product)
-
-    db.session.commit()
-    return "✅ Database initialized with 110 products (10 real + 100 fake)"
 
 
 @app.route("/preview-products")
